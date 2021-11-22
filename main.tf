@@ -5,10 +5,10 @@ terraform {
     }
   }
   backend "remote" {
-    organization = "zbmowrey"
+    organization = "zbmowrey-cloud-admin"
 
     workspaces {
-      name = "tfc-admin"
+      name = "terraform-cloud"
     }
   }
 }
