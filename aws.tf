@@ -18,7 +18,7 @@ resource "tfe_organization" "zbmowrey-cloud-admin" {
 # Create one workspace for any environment defined in terraform.auto.tfvars.
 
 data "tfe_oauth_client" "aws" {
-  oauth_client_id = var.oauth_clients.aws
+  oauth_client_id = var.oauth_clients.zbmowrey
 }
 
 # Create one workspace for any environment defined in terraform.auto.tfvars.
@@ -63,14 +63,4 @@ resource "tfe_variable" "aws-secret-keys" {
   value        = lookup(var.access_keys["aws"], each.value, { "secret" : "secret" })["secret"]
   workspace_id = lookup(data.tfe_workspace_ids.aws-all.ids, "${local.aws_app}-${each.value}")
   sensitive    = true
-}
-
-# Set this value because we'll want to invalidate these later.
-
-resource "tfe_variable" "aws-cf-distributions" {
-  for_each     = lookup(var.cf_distribution, local.aws_org, {})
-  category     = "terraform"
-  key          = "cf_distribution"
-  value        = lookup(var.cf_distribution["aws"], each.key, "")
-  workspace_id = lookup(data.tfe_workspace_ids.aws-all.ids, "${local.aws_app}-${each.key}")
 }
