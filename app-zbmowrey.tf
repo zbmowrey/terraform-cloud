@@ -2,7 +2,7 @@ locals {
   zbmowrey_org          = "zbmowrey"
   zbmowrey_app          = "zbmowrey-com"
   zbmowrey_email        = "zbmowrey@gmail.com"
-  zbmowrey_environments = tolist(["develop", "staging", "main", "test"])
+  zbmowrey_environments = tolist(["develop", "staging", "main"])
 }
 
 # This organization contains our state. It must not be destroyed.
