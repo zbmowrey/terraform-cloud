@@ -26,7 +26,7 @@ resource "tfe_organization" "template" {
 # Oauth really needs to be set up independently.
 
 data "tfe_oauth_client" "template" {
-  oauth_client_id = "oc-FiwAHfUuLXjwRcUT"
+  oauth_client_id = var.oauth_clients.template
 }
 
 # Create one workspace for any environment defined in terraform.auto.tfvars.
@@ -35,6 +35,7 @@ resource "tfe_workspace" "template" {
   for_each                  = toset(local.template_environments)
   name                      = "${local.template_app}-${each.value}"
   organization              = tfe_organization.template.name
+  working_directory         = "terraform"
   remote_state_consumer_ids = []
   trigger_prefixes          = []
   vcs_repo {
