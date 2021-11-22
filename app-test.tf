@@ -26,7 +26,7 @@ resource "tfe_organization" "tfc-test2" {
 # Oauth really needs to be set up independently.
 
 data "tfe_oauth_client" "tfc-test2" {
-  oauth_client_id = "oc-FiwAHfUuLXjwRcUT"
+  oauth_client_id = "oc-s67mg9epNCX1QPkx"
 }
 
 # Create one workspace for any environment defined in terraform.auto.tfvars.
