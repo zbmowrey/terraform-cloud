@@ -44,42 +44,42 @@ resource "tfe_workspace" "tfc-test2" {
   }
 }
 
-data "tfe_workspace_ids" "tfc-test2-all" {
-  depends_on   = [tfe_workspace.tfc-test2]
-  organization = tfe_organization.tfc-test2.name
-  names        = ["*"]
-}
-
-# Access keys for the various AWS environments.
-
-resource "tfe_variable" "tfc-test2-access-keys" {
-  depends_on   = [data.tfe_workspace_ids.tfc-test2-all]
-  for_each     = toset(local.tfc-test2_environments)
-  category     = "env"
-  key          = "AWS_ACCESS_KEY_ID"
-  value        = lookup(var.access_keys["aws"], each.value, { "access" : "access" })["access"]
-  workspace_id = lookup(data.tfe_workspace_ids.tfc-test2-all.ids, "${local.tfc-test2_app}-${each.value}")
-  sensitive    = true
-}
-
-# Secret keys for the various AWS environments.
-
-resource "tfe_variable" "tfc-test2-secrets" {
-  depends_on   = [data.tfe_workspace_ids.tfc-test2-all]
-  for_each     = toset(local.tfc-test2_environments)
-  category     = "env"
-  key          = "AWS_SECRET_ACCESS_KEY"
-  value        = lookup(var.access_keys["aws"], each.value, { "secret" : "secret" })["secret"]
-  workspace_id = lookup(data.tfe_workspace_ids.tfc-test2-all.ids, "${local.tfc-test2_app}-${each.value}")
-  sensitive    = true
-}
-
-# There is currently no CF Distribution for tfc-test2, but it's coming.
-
-resource "tfe_variable" "tfc-test2-cf-distributions" {
-  for_each     = lookup(var.cf_distribution,local.tfc-test2_org,{})
-  category     = "terraform"
-  key          = "cf_distribution"
-  value        = lookup(var.cf_distribution["tfc-test2"], each.key, "")
-  workspace_id = lookup(data.tfe_workspace_ids.tfc-test2-all.ids,"${local.tfc-test2_app}-${each.key}")
-}
+#data "tfe_workspace_ids" "tfc-test2-all" {
+#  depends_on   = [tfe_workspace.tfc-test2]
+#  organization = tfe_organization.tfc-test2.name
+#  names        = ["*"]
+#}
+#
+## Access keys for the various AWS environments.
+#
+#resource "tfe_variable" "tfc-test2-access-keys" {
+#  depends_on   = [data.tfe_workspace_ids.tfc-test2-all]
+#  for_each     = toset(local.tfc-test2_environments)
+#  category     = "env"
+#  key          = "AWS_ACCESS_KEY_ID"
+#  value        = lookup(var.access_keys["aws"], each.value, { "access" : "access" })["access"]
+#  workspace_id = lookup(data.tfe_workspace_ids.tfc-test2-all.ids, "${local.tfc-test2_app}-${each.value}")
+#  sensitive    = true
+#}
+#
+## Secret keys for the various AWS environments.
+#
+#resource "tfe_variable" "tfc-test2-secrets" {
+#  depends_on   = [data.tfe_workspace_ids.tfc-test2-all]
+#  for_each     = toset(local.tfc-test2_environments)
+#  category     = "env"
+#  key          = "AWS_SECRET_ACCESS_KEY"
+#  value        = lookup(var.access_keys["aws"], each.value, { "secret" : "secret" })["secret"]
+#  workspace_id = lookup(data.tfe_workspace_ids.tfc-test2-all.ids, "${local.tfc-test2_app}-${each.value}")
+#  sensitive    = true
+#}
+#
+## There is currently no CF Distribution for tfc-test2, but it's coming.
+#
+#resource "tfe_variable" "tfc-test2-cf-distributions" {
+#  for_each     = lookup(var.cf_distribution,local.tfc-test2_org,{})
+#  category     = "terraform"
+#  key          = "cf_distribution"
+#  value        = lookup(var.cf_distribution["tfc-test2"], each.key, "")
+#  workspace_id = lookup(data.tfe_workspace_ids.tfc-test2-all.ids,"${local.tfc-test2_app}-${each.key}")
+#}
