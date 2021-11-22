@@ -24,33 +24,22 @@ data "tfe_oauth_client" "aws" {
 # Create one workspace for any environment defined in terraform.auto.tfvars.
 
 resource "tfe_workspace" "aws" {
-  for_each                  = toset(local.aws_environments)
-  name                      = "${local.aws_app}-${each.value}"
+  name                      = "cloud-admin"
   organization              = tfe_organization.zbmowrey-cloud-admin.name
-  working_directory         = "terraform"
-  remote_state_consumer_ids = []
-  trigger_prefixes          = []
   vcs_repo {
     identifier     = "${local.aws_org}/${local.aws_app}"
     oauth_token_id = data.tfe_oauth_client.aws.oauth_token_id
-    branch         = each.value
+    branch         = "main"
   }
-}
-
-data "tfe_workspace_ids" "aws-all" {
-  depends_on   = [tfe_workspace.aws]
-  organization = tfe_organization.zbmowrey-cloud-admin.name
-  names        = ["*"]
 }
 
 # Access keys for the various AWS environments.
 
 resource "tfe_variable" "aws-access-keys" {
-  for_each     = toset(local.aws_environments)
   category     = "env"
   key          = "AWS_ACCESS_KEY_ID"
-  value        = lookup(var.access_keys["aws"], each.value, { "access" : "access" })["access"]
-  workspace_id = lookup(data.tfe_workspace_ids.aws-all.ids, "${local.aws_app}-${each.value}")
+  value        = var.aws_root_key
+  workspace_id = tfe_workspace.aws.id
   sensitive    = true
 }
 
@@ -60,7 +49,7 @@ resource "tfe_variable" "aws-secret-keys" {
   for_each     = toset(local.aws_environments)
   category     = "env"
   key          = "AWS_SECRET_ACCESS_KEY"
-  value        = lookup(var.access_keys["aws"], each.value, { "secret" : "secret" })["secret"]
-  workspace_id = lookup(data.tfe_workspace_ids.aws-all.ids, "${local.aws_app}-${each.value}")
+  value        = var.aws_root_secret
+  workspace_id = tfe_workspace.aws.id
   sensitive    = true
 }
