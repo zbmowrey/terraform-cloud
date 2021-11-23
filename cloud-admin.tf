@@ -1,7 +1,7 @@
 locals {
-  cloud-admin_org          = "zbmowrey"
-  cloud-admin_app          = "cloud-admin"
-  cloud-admin_email        = "zbmowrey@gmail.com"
+  cloud-admin_org   = "zbmowrey"
+  cloud-admin_app   = "cloud-admin"
+  cloud-admin_email = "zbmowrey@gmail.com"
 }
 
 # This organization contains our state. It must not be destroyed.
@@ -23,13 +23,13 @@ data "tfe_oauth_client" "cloud-admin" {
 # Create one workspace for any environment defined in terraform.auto.tfvars.
 
 resource "tfe_workspace" "cloud-admin" {
-  name                      = "cloud-admin"
-  organization              = tfe_organization.zbmowrey-cloud-admin.name
-#  vcs_repo {
-#    identifier     = "${local.cloud-admin_org}/${local.cloud-admin_app}"
-#    oauth_token_id = data.tfe_oauth_client.cloud-admin.oauth_token_id
-#    branch         = "main"
-#  }
+  name         = "cloud-admin"
+  organization = tfe_organization.zbmowrey-cloud-admin.name
+  vcs_repo {
+    identifier     = "${local.cloud-admin_org}/${local.cloud-admin_app}"
+    oauth_token_id = data.tfe_oauth_client.cloud-admin.oauth_token_id
+    branch         = "main"
+  }
 }
 
 # Access keys for the various cloud-admin environments.
@@ -50,4 +50,36 @@ resource "tfe_variable" "cloud-admin-secret-keys" {
   value        = var.aws_root_secret
   workspace_id = tfe_workspace.cloud-admin.id
   sensitive    = true
+}
+
+resource "tfe_variable" "cloud-admin-region" {
+  category     = "terraform"
+  key          = "region"
+  value        = "us-east-2"
+  workspace_id = tfe_workspace.cloud-admin.id
+  sensitive    = false
+}
+
+resource "tfe_variable" "cloud-admin-email" {
+  category     = "terraform"
+  key          = "root_account_email"
+  value        = "aws@zbmowrey.com"
+  workspace_id = tfe_workspace.cloud-admin.id
+  sensitive    = false
+}
+
+resource "tfe_variable" "cloud-admin-account-name" {
+  category     = "terraform"
+  key          = "root_account_name"
+  value        = "zbmowrey76"
+  workspace_id = tfe_workspace.cloud-admin.id
+  sensitive    = false
+}
+
+resource "tfe_variable" "cloud-admin-domain" {
+  category     = "terraform"
+  key          = "account_email_domain"
+  value        = "@zbmowrey.com"
+  workspace_id = tfe_workspace.cloud-admin.id
+  sensitive    = false
 }
