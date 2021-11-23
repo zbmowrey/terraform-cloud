@@ -64,7 +64,7 @@ resource "tfe_variable" "cloud-admin-region" {
 resource "tfe_variable" "cloud-admin-email" {
   category     = "terraform"
   key          = "root_account_email"
-  value        = "aws@zbmowrey.com"
+  value        = "zb@zbmowrey.com"
   workspace_id = tfe_workspace.cloud-admin.id
   sensitive    = false
 }

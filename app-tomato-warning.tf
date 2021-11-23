@@ -36,8 +36,6 @@ resource "tfe_workspace" "tomatowarning" {
   name                      = "${local.tomatowarning_app}-${each.value}"
   organization              = tfe_organization.tomatowarning.name
   working_directory         = "terraform"
-  remote_state_consumer_ids = []
-  trigger_prefixes          = []
   vcs_repo {
     identifier     = "${local.tomatowarning_org}/${local.tomatowarning_app}"
     oauth_token_id = data.tfe_oauth_client.tomatowarning.oauth_token_id

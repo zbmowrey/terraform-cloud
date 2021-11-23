@@ -74,4 +74,3 @@ resource "tfe_variable" "zbmowrey-cf-distributions" {
   value        = lookup(var.cf_distribution["zbmowrey"], each.key, "")
   workspace_id = lookup(data.tfe_workspace_ids.zbmowrey-all.ids, "${local.zbmowrey_app}-${each.key}")
 }
-
