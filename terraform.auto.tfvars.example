@@ -15,6 +15,14 @@ access_keys = {
     }
   }
 }
+
+# After connecting github oauth, edit the VCS connection and get the ID from the URL. Then add ID values here.
+oauth_clients = {
+  zbmowrey      = "oc-"
+  tomatowarning = "oc-"
+  cloud-admin    = "oc-"
+}
+
 # Pass to a post-deployment process to create CDN invalidation.
 cf_distribution = {
   zbmowrey = {
@@ -23,3 +31,7 @@ cf_distribution = {
     main    = ""
   }
 }
+aws_root_key    = ""
+aws_root_secret = ""
+
+
