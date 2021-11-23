@@ -24,14 +24,23 @@ data "tfe_oauth_client" "zbmowrey" {
 # Create one workspace for any environment defined in terraform.auto.tfvars.
 
 resource "tfe_workspace" "zbmowrey" {
-  for_each                  = toset(local.zbmowrey_environments)
-  name                      = "${local.zbmowrey_app}-${each.value}"
-  organization              = tfe_organization.zbmowrey.name
-  working_directory         = "terraform"
-  remote_state_consumer_ids = []
-  trigger_prefixes          = []
+  for_each          = toset(local.zbmowrey_environments)
+  name              = "${local.zbmowrey_app}-${each.value}"
+  organization      = tfe_organization.zbmowrey.name
+  working_directory = "terraform"
   vcs_repo {
     identifier     = "${local.zbmowrey_org}/${local.zbmowrey_app}"
+    oauth_token_id = data.tfe_oauth_client.zbmowrey.oauth_token_id
+    branch         = each.value
+  }
+}
+
+resource "tfe_workspace" "insult-bot" {
+  for_each     = toset(local.zbmowrey_environments)
+  name         = "insult-bot-${each.value}"
+  organization = tfe_organization.zbmowrey.name
+  vcs_repo {
+    identifier     = "${local.zbmowrey_org}/insult-bot"
     oauth_token_id = data.tfe_oauth_client.zbmowrey.oauth_token_id
     branch         = each.value
   }
@@ -74,3 +83,5 @@ resource "tfe_variable" "zbmowrey-cf-distributions" {
   value        = lookup(var.cf_distribution["zbmowrey"], each.key, "")
   workspace_id = lookup(data.tfe_workspace_ids.zbmowrey-all.ids, "${local.zbmowrey_app}-${each.key}")
 }
+
+
