@@ -50,7 +50,7 @@ resource "tfe_variable" "zbmowrey-access-keys" {
   category     = "env"
   key          = "AWS_ACCESS_KEY_ID"
   value        = lookup(var.access_keys["aws"], each.value, { "access" : "access" })["access"]
-  workspace_id = lookup(data.tfe_workspace_ids.zbmowrey-all.ids, "${local.zbmowrey_app}-${each.value}")
+  workspace_id = lookup(data.tfe_workspace_ids.zbmowrey-all.ids, "${local.zbmowrey_app}-${each.key}")
   sensitive    = true
 }
 
@@ -61,7 +61,7 @@ resource "tfe_variable" "zbmowrey-secret-keys" {
   category     = "env"
   key          = "AWS_SECRET_ACCESS_KEY"
   value        = lookup(var.access_keys["aws"], each.value, { "secret" : "secret" })["secret"]
-  workspace_id = lookup(data.tfe_workspace_ids.zbmowrey-all.ids, "${local.zbmowrey_app}-${each.value}")
+  workspace_id = lookup(data.tfe_workspace_ids.zbmowrey-all.ids, "${local.zbmowrey_app}-${each.key}")
   sensitive    = true
 }
 

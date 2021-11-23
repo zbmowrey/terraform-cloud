@@ -16,4 +16,3 @@ terraform {
 provider "tfe" {
   token = var.access_keys["tf_cloud"]
 }
-
