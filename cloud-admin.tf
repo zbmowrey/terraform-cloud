@@ -25,11 +25,11 @@ data "tfe_oauth_client" "cloud-admin" {
 resource "tfe_workspace" "cloud-admin" {
   name                      = "cloud-admin"
   organization              = tfe_organization.zbmowrey-cloud-admin.name
-  vcs_repo {
-    identifier     = "${local.cloud-admin_org}/${local.cloud-admin_app}"
-    oauth_token_id = data.tfe_oauth_client.cloud-admin.oauth_token_id
-    branch         = "main"
-  }
+#  vcs_repo {
+#    identifier     = "${local.cloud-admin_org}/${local.cloud-admin_app}"
+#    oauth_token_id = data.tfe_oauth_client.cloud-admin.oauth_token_id
+#    branch         = "main"
+#  }
 }
 
 # Access keys for the various cloud-admin environments.
