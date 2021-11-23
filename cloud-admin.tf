@@ -15,9 +15,10 @@ resource "tfe_organization" "zbmowrey-cloud-admin" {
 }
 
 # Create one workspace for any environment defined in terraform.auto.tfvars.
+# Get the VCS client ID for this workspace by editing, then pull from URL.
 
 data "tfe_oauth_client" "cloud-admin" {
-  oauth_client_id = var.oauth_clients.zbmowrey
+  oauth_client_id = var.oauth_clients.cloud-admin
 }
 
 # Create one workspace for any environment defined in terraform.auto.tfvars.
@@ -27,7 +28,7 @@ resource "tfe_workspace" "cloud-admin" {
   organization = tfe_organization.zbmowrey-cloud-admin.name
   vcs_repo {
     identifier     = "zbmowrey/cloud-admin"
-    oauth_token_id = data.tfe_oauth_client.zbmowrey.oauth_token_id
+    oauth_token_id = data.tfe_oauth_client.cloud-admin.oauth_token_id
     branch         = "main"
   }
 }

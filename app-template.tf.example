@@ -23,7 +23,8 @@ resource "tfe_organization" "template" {
   name  = local.template_org
 }
 
-# Oauth really needs to be set up independently.
+# Create one workspace for any environment defined in terraform.auto.tfvars.
+# Get the VCS client ID for this workspace by editing, then pull from URL.
 
 data "tfe_oauth_client" "template" {
   oauth_client_id = var.oauth_clients.template
