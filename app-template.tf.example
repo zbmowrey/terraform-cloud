@@ -1,15 +1,22 @@
-# Find and replace "template" with your chosen app tag.
 
-# Run a plan and then an apply to create the Org & Workspaces.
+##########################################################
+# Instructions - If you don't follow these, it won't work.
 
-# After creating workspaces, uncomment the secrets area.
-
-# Run a new apply to create the environment/tf vars in each workspace.
+# 1. Copy this file to another, naming it appropriately.
+# 2. Find/replace "template" with your chosen app name.
+# 3. Commit the file and push as-is.
+# 4. Submit a PR targeting the "main" branch.
+# 5. After the merge, go to app.terraform.io and create a VCS connection for your new Organization.
+# 6. Org > Settings > Providers > Edit. Note the oauth_client_id.
+# 7. Add the oauth_client_id to zbmowrey-cloud-admin/terraform-cloud workspace variables, with the other client IDs.
+# 8. Uncomment everything from "Oauth really needs to be set up independently" onward.
+# 9. Commit & push, then merge to main.
+# 10. Monitor zbmowrey-cloud-admin/terraform-cloud for any errors and resolve if they occur.
 
 locals {
   template_org          = "template"
   template_app          = "template-com"
-  template_email        = "tfc@zbmowrey.com"
+  template_email        = "template@zbmowrey.com"
   template_environments = tolist(["develop", "staging", "main"])
 }
 
@@ -23,65 +30,62 @@ resource "tfe_organization" "template" {
   name  = local.template_org
 }
 
-# Create one workspace for any environment defined in terraform.auto.tfvars.
-# Get the VCS client ID for this workspace by editing, then pull from URL.
-
-data "tfe_oauth_client" "template" {
-  oauth_client_id = var.oauth_clients.template
-}
-
-# Create one workspace for any environment defined in terraform.auto.tfvars.
-
-resource "tfe_workspace" "template" {
-  for_each                  = toset(local.template_environments)
-  name                      = "${local.template_app}-${each.value}"
-  organization              = tfe_organization.template.name
-  working_directory         = "terraform"
-  remote_state_consumer_ids = []
-  trigger_prefixes          = []
-  vcs_repo {
-    identifier     = "${local.template_org}/${local.template_app}"
-    oauth_token_id = data.tfe_oauth_client.template.oauth_token_id
-    branch         = each.value
-  }
-}
-
-data "tfe_workspace_ids" "template-all" {
-  depends_on   = [tfe_workspace.template]
-  organization = tfe_organization.template.name
-  names        = ["*"]
-}
-
-# Access keys for the various AWS environments.
-
-resource "tfe_variable" "template-access-keys" {
-  depends_on   = [data.tfe_workspace_ids.template-all]
-  for_each     = toset(local.template_environments)
-  category     = "env"
-  key          = "AWS_ACCESS_KEY_ID"
-  value        = lookup(var.access_keys["aws"], each.value, { "access" : "access" })["access"]
-  workspace_id = lookup(data.tfe_workspace_ids.template-all.ids, "${local.template_app}-${each.value}")
-  sensitive    = true
-}
-
-# Secret keys for the various AWS environments.
-
-resource "tfe_variable" "template-secrets" {
-  depends_on   = [data.tfe_workspace_ids.template-all]
-  for_each     = toset(local.template_environments)
-  category     = "env"
-  key          = "AWS_SECRET_ACCESS_KEY"
-  value        = lookup(var.access_keys["aws"], each.value, { "secret" : "secret" })["secret"]
-  workspace_id = lookup(data.tfe_workspace_ids.template-all.ids, "${local.template_app}-${each.value}")
-  sensitive    = true
-}
-
-# There is currently no CF Distribution for template, but it's coming.
-
-resource "tfe_variable" "template-cf-distributions" {
-  for_each     = lookup(var.cf_distribution,local.template_org,{})
-  category     = "terraform"
-  key          = "cf_distribution"
-  value        = lookup(var.cf_distribution["template"], each.key, "")
-  workspace_id = lookup(data.tfe_workspace_ids.template-all.ids,"${local.template_app}-${each.key}")
-}
+## Oauth really needs to be set up independently.
+#
+#data "tfe_oauth_client" "template" {
+#  oauth_client_id = var.oauth_clients.template
+#}
+#
+## Create one workspace for any environment defined in terraform.auto.tfvars.
+#
+#resource "tfe_workspace" "template" {
+#  for_each                  = toset(local.template_environments)
+#  name                      = "${local.template_app}-${each.value}"
+#  organization              = tfe_organization.template.name
+#  working_directory         = "terraform"
+#  vcs_repo {
+#    identifier     = "${local.template_org}/${local.template_app}"
+#    oauth_token_id = data.tfe_oauth_client.template.oauth_token_id
+#    branch         = each.value
+#  }
+#}
+#
+#data "tfe_workspace_ids" "template-all" {
+#  depends_on   = [tfe_workspace.template]
+#  organization = tfe_organization.template.name
+#  names        = ["*"]
+#}
+#
+## Access keys for the various AWS environments.
+#
+#resource "tfe_variable" "template-access-keys" {
+#  depends_on   = [data.tfe_workspace_ids.template-all]
+#  for_each     = toset(local.template_environments)
+#  category     = "env"
+#  key          = "AWS_ACCESS_KEY_ID"
+#  value        = lookup(var.access_keys["aws"], each.value, { "access" : "access" })["access"]
+#  workspace_id = lookup(data.tfe_workspace_ids.template-all.ids, "${local.template_app}-${each.value}")
+#  sensitive    = true
+#}
+#
+## Secret keys for the various AWS environments.
+#
+#resource "tfe_variable" "template-secrets" {
+#  depends_on   = [data.tfe_workspace_ids.template-all]
+#  for_each     = toset(local.template_environments)
+#  category     = "env"
+#  key          = "AWS_SECRET_ACCESS_KEY"
+#  value        = lookup(var.access_keys["aws"], each.value, { "secret" : "secret" })["secret"]
+#  workspace_id = lookup(data.tfe_workspace_ids.template-all.ids, "${local.template_app}-${each.value}")
+#  sensitive    = true
+#}
+#
+## There is currently no CF Distribution for template, but it's coming.
+#
+#resource "tfe_variable" "template-cf-distributions" {
+#  for_each     = lookup(var.cf_distribution,local.template_org,{})
+#  category     = "terraform"
+#  key          = "cf_distribution"
+#  value        = lookup(var.cf_distribution["template"], each.key, "")
+#  workspace_id = lookup(data.tfe_workspace_ids.template-all.ids,"${local.template_app}-${each.key}")
+#}
