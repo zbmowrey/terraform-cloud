@@ -46,6 +46,26 @@ resource "tfe_workspace" "insult-bot" {
   }
 }
 
+resource "tfe_notification_configuration" "insult-slack" {
+  for_each         = toset(local.zbmowrey_environments)
+  destination_type = "slack"
+  enabled          = true
+  url              = var.terraform_slack_url
+  name             = "Terraform Cloud"
+  workspace_id     = lookup(data.tfe_workspace_ids.zbmowrey-all.ids, "insult-bot-${each.key}")
+  triggers         = ["run:created", "run:needs_attention", "run:completed", "run:errored"]
+}
+
+resource "tfe_notification_configuration" "zbmowrey-slack" {
+  for_each         = toset(local.zbmowrey_environments)
+  destination_type = "slack"
+  enabled          = true
+  url              = var.terraform_slack_url
+  name             = "Terraform Cloud"
+  workspace_id     = lookup(data.tfe_workspace_ids.zbmowrey-all.ids, "${local.zbmowrey_app}-${each.key}")
+  triggers         = ["run:created", "run:needs_attention", "run:completed", "run:errored"]
+}
+
 data "tfe_workspace_ids" "zbmowrey-all" {
   depends_on   = [tfe_workspace.zbmowrey]
   organization = tfe_organization.zbmowrey.name

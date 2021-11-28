@@ -32,15 +32,25 @@ data "tfe_oauth_client" "tomatowarning" {
 # Create one workspace for any environment defined in terraform.auto.tfvars.
 
 resource "tfe_workspace" "tomatowarning" {
-  for_each                  = toset(local.tomatowarning_environments)
-  name                      = "${local.tomatowarning_app}-${each.value}"
-  organization              = tfe_organization.tomatowarning.name
-  working_directory         = "terraform"
+  for_each          = toset(local.tomatowarning_environments)
+  name              = "${local.tomatowarning_app}-${each.value}"
+  organization      = tfe_organization.tomatowarning.name
+  working_directory = "terraform"
   vcs_repo {
     identifier     = "${local.tomatowarning_org}/${local.tomatowarning_app}"
     oauth_token_id = data.tfe_oauth_client.tomatowarning.oauth_token_id
     branch         = each.value
   }
+}
+
+resource "tfe_notification_configuration" "tomatowarning-slack" {
+  for_each         = toset(local.tomatowarning_environments)
+  destination_type = "slack"
+  enabled          = true
+  url              = var.terraform_slack_url
+  name             = "Terraform Cloud"
+  workspace_id     = lookup(data.tfe_workspace_ids.tomatowarning-all.ids, "${local.tomatowarning_app}-${each.value}")
+  triggers         = ["run:created", "run:needs_attention", "run:completed", "run:errored"]
 }
 
 data "tfe_workspace_ids" "tomatowarning-all" {
@@ -76,9 +86,9 @@ resource "tfe_variable" "tomatowarning-secrets" {
 # There is currently no CF Distribution for TomatoWarning, but it's coming.
 
 resource "tfe_variable" "tomatowarning-cf-distributions" {
-  for_each     = lookup(var.cf_distribution,local.tomatowarning_org,{})
+  for_each     = lookup(var.cf_distribution, local.tomatowarning_org, {})
   category     = "terraform"
   key          = "cf_distribution"
   value        = lookup(var.cf_distribution["tomatowarning"], each.key, "")
-  workspace_id = lookup(data.tfe_workspace_ids.tomatowarning-all.ids,"${local.tomatowarning_app}-${each.key}")
+  workspace_id = lookup(data.tfe_workspace_ids.tomatowarning-all.ids, "${local.tomatowarning_app}-${each.key}")
 }
