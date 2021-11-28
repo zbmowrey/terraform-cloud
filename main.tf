@@ -14,7 +14,7 @@ terraform {
 }
 
 provider "tfe" {
-  token = "HmjeiIqsEghTNQ.atlasv1.Bm8zDKVxTmO4qdAA3sCAewuuIbFu56VQXD6chgsGijBxhJnHY3jox0fGBXIOH4g7gR4"
+  token = ""
 }
 
 resource "tfe_workspace" "terraform-cloud" {
