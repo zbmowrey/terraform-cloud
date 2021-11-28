@@ -22,15 +22,16 @@ provider "tfe" {
 }
 
 resource "tfe_workspace" "terraform-cloud" {
-  name         = "terraform-cloud"
-  description  = "Manages all Terraform Cloud organizations, workspaces, and variables."
-  organization = tfe_organization.zbmowrey-cloud-admin.name
+  name                = "terraform-cloud"
+  description         = "Manages all Terraform Cloud organizations, workspaces, and variables."
+  organization        = tfe_organization.zbmowrey-cloud-admin.name
   vcs_repo {
     identifier     = "zbmowrey/terraform-cloud"
     oauth_token_id = data.tfe_oauth_client.cloud-admin.oauth_token_id
     branch         = "main"
   }
-  auto_apply = true
+  auto_apply          = true
+  speculative_enabled = true
 }
 
 resource "tfe_notification_configuration" "terraform-cloud" {

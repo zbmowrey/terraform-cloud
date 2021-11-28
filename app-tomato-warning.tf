@@ -32,16 +32,18 @@ data "tfe_oauth_client" "tomatowarning" {
 # Create one workspace for any environment defined in terraform.auto.tfvars.
 
 resource "tfe_workspace" "tomatowarning" {
-  for_each          = toset(local.tomatowarning_environments)
-  name              = "${local.tomatowarning_app}-${each.value}"
-  description = "https://tomatowarning.com ${each.value} environment"
-  organization      = tfe_organization.tomatowarning.name
-  working_directory = "terraform"
+  for_each            = toset(local.tomatowarning_environments)
+  name                = "${local.tomatowarning_app}-${each.value}"
+  description         = "https://tomatowarning.com ${each.value} environment"
+  organization        = tfe_organization.tomatowarning.name
+  working_directory   = "terraform"
   vcs_repo {
     identifier     = "${local.tomatowarning_org}/${local.tomatowarning_app}"
     oauth_token_id = data.tfe_oauth_client.tomatowarning.oauth_token_id
     branch         = each.value
   }
+  auto_apply          = true
+  speculative_enabled = true
 }
 
 resource "tfe_notification_configuration" "tomatowarning-slack" {

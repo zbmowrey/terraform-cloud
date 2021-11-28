@@ -24,28 +24,32 @@ data "tfe_oauth_client" "zbmowrey" {
 # Create one workspace for any environment defined in terraform.auto.tfvars.
 
 resource "tfe_workspace" "zbmowrey" {
-  for_each          = toset(local.zbmowrey_environments)
-  name              = "${local.zbmowrey_app}-${each.value}"
-  description = "https://zbmowrey.com ${each.value} environment"
-  organization      = tfe_organization.zbmowrey.name
-  working_directory = "terraform"
+  for_each            = toset(local.zbmowrey_environments)
+  name                = "${local.zbmowrey_app}-${each.value}"
+  description         = "https://zbmowrey.com ${each.value} environment"
+  organization        = tfe_organization.zbmowrey.name
+  working_directory   = "terraform"
   vcs_repo {
     identifier     = "${local.zbmowrey_org}/${local.zbmowrey_app}"
     oauth_token_id = data.tfe_oauth_client.zbmowrey.oauth_token_id
     branch         = each.value
   }
+  auto_apply          = true
+  speculative_enabled = true
 }
 
 resource "tfe_workspace" "insult-bot" {
-  for_each     = toset(local.zbmowrey_environments)
-  name         = "insult-bot-${each.value}"
-  description = "Slack Insult Bot ${each.value} environment"
-  organization = tfe_organization.zbmowrey.name
+  for_each            = toset(local.zbmowrey_environments)
+  name                = "insult-bot-${each.value}"
+  description         = "Slack Insult Bot ${each.value} environment"
+  organization        = tfe_organization.zbmowrey.name
   vcs_repo {
     identifier     = "${local.zbmowrey_org}/insult-bot"
     oauth_token_id = data.tfe_oauth_client.zbmowrey.oauth_token_id
     branch         = each.value
   }
+  auto_apply          = true
+  speculative_enabled = true
 }
 
 resource "tfe_notification_configuration" "insult-slack" {

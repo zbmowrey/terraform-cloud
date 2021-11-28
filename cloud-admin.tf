@@ -24,14 +24,16 @@ data "tfe_oauth_client" "cloud-admin" {
 # Create one workspace for any environment defined in terraform.auto.tfvars.
 
 resource "tfe_workspace" "cloud-admin" {
-  name         = "cloud-admin"
-  description  = "Governance Configuration for Cloud Service Providers"
-  organization = tfe_organization.zbmowrey-cloud-admin.name
+  name                = "cloud-admin"
+  description         = "Governance Configuration for Cloud Service Providers"
+  organization        = tfe_organization.zbmowrey-cloud-admin.name
   vcs_repo {
     identifier     = "zbmowrey/cloud-admin"
     oauth_token_id = data.tfe_oauth_client.cloud-admin.oauth_token_id
     branch         = "main"
   }
+  auto_apply          = true
+  speculative_enabled = true
 }
 
 resource "tfe_notification_configuration" "cloud-admin-slack" {
