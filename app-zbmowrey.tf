@@ -26,6 +26,7 @@ data "tfe_oauth_client" "zbmowrey" {
 resource "tfe_workspace" "zbmowrey" {
   for_each          = toset(local.zbmowrey_environments)
   name              = "${local.zbmowrey_app}-${each.value}"
+  description = "https://zbmowrey.com ${each.value} environment"
   organization      = tfe_organization.zbmowrey.name
   working_directory = "terraform"
   vcs_repo {
@@ -38,6 +39,7 @@ resource "tfe_workspace" "zbmowrey" {
 resource "tfe_workspace" "insult-bot" {
   for_each     = toset(local.zbmowrey_environments)
   name         = "insult-bot-${each.value}"
+  description = "Slack Insult Bot ${each.value} environment"
   organization = tfe_organization.zbmowrey.name
   vcs_repo {
     identifier     = "${local.zbmowrey_org}/insult-bot"

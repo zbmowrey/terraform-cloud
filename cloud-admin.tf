@@ -25,6 +25,7 @@ data "tfe_oauth_client" "cloud-admin" {
 
 resource "tfe_workspace" "cloud-admin" {
   name         = "cloud-admin"
+  description  = "Governance Configuration for Cloud Service Providers"
   organization = tfe_organization.zbmowrey-cloud-admin.name
   vcs_repo {
     identifier     = "zbmowrey/cloud-admin"

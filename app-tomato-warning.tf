@@ -34,6 +34,7 @@ data "tfe_oauth_client" "tomatowarning" {
 resource "tfe_workspace" "tomatowarning" {
   for_each          = toset(local.tomatowarning_environments)
   name              = "${local.tomatowarning_app}-${each.value}"
+  description = "https://tomatowarning.com ${each.value} environment"
   organization      = tfe_organization.tomatowarning.name
   working_directory = "terraform"
   vcs_repo {
