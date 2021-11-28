@@ -13,8 +13,12 @@ terraform {
   }
 }
 
+locals {
+  notification_triggers = ["run:needs_attention", "run:errored"]
+}
+
 provider "tfe" {
-  token = "HmjeiIqsEghTNQ.atlasv1.Bm8zDKVxTmO4qdAA3sCAewuuIbFu56VQXD6chgsGijBxhJnHY3jox0fGBXIOH4g7gR4"
+  token = var.access_keys["tf_cloud"]
 }
 
 resource "tfe_workspace" "terraform-cloud" {
@@ -33,5 +37,5 @@ resource "tfe_notification_configuration" "terraform-cloud" {
   url              = var.terraform_slack_url
   name             = "Terraform Cloud"
   workspace_id     = tfe_workspace.terraform-cloud.id
-  triggers = ["run:created", "run:needs_attention", "run:completed", "run:errored"]
+  triggers         = local.notification_triggers
 }

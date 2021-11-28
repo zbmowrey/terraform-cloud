@@ -53,7 +53,7 @@ resource "tfe_notification_configuration" "insult-slack" {
   url              = var.terraform_slack_url
   name             = "Terraform Cloud"
   workspace_id     = lookup(data.tfe_workspace_ids.zbmowrey-all.ids, "insult-bot-${each.key}")
-  triggers         = ["run:created", "run:needs_attention", "run:completed", "run:errored"]
+  triggers         = ["run:needs_attention", "run:errored"]
 }
 
 resource "tfe_notification_configuration" "zbmowrey-slack" {

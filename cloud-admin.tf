@@ -39,7 +39,7 @@ resource "tfe_notification_configuration" "cloud-admin-slack" {
   url              = var.terraform_slack_url
   name             = "Terraform Cloud"
   workspace_id     = tfe_workspace.cloud-admin.id
-  triggers = ["run:created", "run:needs_attention", "run:completed", "run:errored"]
+  triggers         = ["run:needs_attention", "run:errored"]
 }
 
 # Access keys for the various cloud-admin environments.
