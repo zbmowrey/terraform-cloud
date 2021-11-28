@@ -3,4 +3,3 @@ variable cf_distribution {}
 variable oauth_clients {}
 variable aws_root_key {}
 variable aws_root_secret {}
-variable terraform_slack_url {}
