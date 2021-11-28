@@ -15,6 +15,7 @@ terraform {
 
 locals {
   notification_triggers = ["run:needs_attention", "run:planning", "run:completed", "run:errored"]
+  foo = "bar"
 }
 
 provider "tfe" {
