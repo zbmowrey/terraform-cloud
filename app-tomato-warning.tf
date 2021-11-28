@@ -50,7 +50,7 @@ resource "tfe_notification_configuration" "tomatowarning-slack" {
   url              = var.terraform_slack_url
   name             = "Terraform Cloud"
   workspace_id     = lookup(data.tfe_workspace_ids.tomatowarning-all.ids, "${local.tomatowarning_app}-${each.value}")
-  triggers         = ["run:needs_attention", "run:errored"]
+  triggers         = local.notification_triggers
 }
 
 data "tfe_workspace_ids" "tomatowarning-all" {
