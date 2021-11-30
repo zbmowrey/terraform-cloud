@@ -110,3 +110,17 @@ resource "tfe_variable" "dns-txt-records" {
     "_dmarc.tomatowarning.com" = ["v=DMARC1; p=none; rua=mailto:admin@tomatowarning.com"]
   }), "/(\".*?\"):/", "$1 = ")
 }
+
+resource "tfe_variable" "dns-mx-records" {
+  category     = "terraform"
+  hcl          = true
+  sensitive    = false
+  key          = "txt_records"
+  workspace_id = lookup(data.tfe_workspace_ids.tomatowarning-all.ids, "${local.tomatowarning_app}-main")
+  value        = replace(jsonencode({
+    "tomatowarning.com" = [
+      "10 mail.protonmail.ch",
+      "20 mailsec.protonmail.ch"
+    ]
+  }), "/(\".*?\"):/", "$1 = ")
+}
