@@ -95,3 +95,16 @@ resource "tfe_variable" "tomatowarning-cf-distributions" {
   value        = lookup(var.cf_distribution["tomatowarning"], each.key, "")
   workspace_id = lookup(data.tfe_workspace_ids.tomatowarning-all.ids, "${local.tomatowarning_app}-${each.key}")
 }
+
+resource "tfe_variable" "dns-txt-records" {
+  category     = ""
+  key          = ""
+  workspace_id = ""
+  value        = replace(jsonencode({
+    "tomatowarning.com"        = [
+      "protonmail-verification=0fd0c316e7e433fbe2760446e704bb489c84a448",
+      "v=spf1 include:_spf.protonmail.ch mx ~all",
+    ]
+    "_dmarc.tomatowarning.com" = ["v=DMARC1; p=none; rua=mailto:admin@tomatowarning.com"]
+  }), "/(\".*?\"):/", "$1 = ")
+}
