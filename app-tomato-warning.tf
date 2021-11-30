@@ -97,9 +97,11 @@ resource "tfe_variable" "tomatowarning-cf-distributions" {
 }
 
 resource "tfe_variable" "dns-txt-records" {
-  category     = ""
-  key          = ""
-  workspace_id = ""
+  category     = "terraform"
+  hcl          = true
+  sensitive    = false
+  key          = "txt_records"
+  workspace_id = lookup(data.tfe_workspace_ids.tomatowarning-all.ids, "${local.tomatowarning_app}-main")
   value        = replace(jsonencode({
     "tomatowarning.com"        = [
       "protonmail-verification=0fd0c316e7e433fbe2760446e704bb489c84a448",
