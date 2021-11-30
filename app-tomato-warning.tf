@@ -115,7 +115,7 @@ resource "tfe_variable" "dns-mx-records" {
   category     = "terraform"
   hcl          = true
   sensitive    = false
-  key          = "txt_records"
+  key          = "mx_records"
   workspace_id = lookup(data.tfe_workspace_ids.tomatowarning-all.ids, "${local.tomatowarning_app}-main")
   value        = replace(jsonencode({
     "tomatowarning.com" = [
@@ -124,3 +124,19 @@ resource "tfe_variable" "dns-mx-records" {
     ]
   }), "/(\".*?\"):/", "$1 = ")
 }
+
+resource "tfe_variable" "dns-cname-records" {
+  category     = "terraform"
+  hcl          = true
+  sensitive    = false
+  key          = "cname_records"
+  workspace_id = lookup(data.tfe_workspace_ids.tomatowarning-all.ids, "${local.tomatowarning_app}-main")
+  value        = replace(jsonencode({
+    "protonmail._domainkey"  = "protonmail.domainkey.dustkdlsumzc7rjy6wanxekga6f4gtqaklq3e3q4werkdovqwq6oq.domains.proton.ch."
+    "protonmail2._domainkey" = "protonmail2.domainkey.dustkdlsumzc7rjy6wanxekga6f4gtqaklq3e3q4werkdovqwq6oq.domains.proton.ch."
+    "protonmail3._domainkey" = "protonmail3.domainkey.dustkdlsumzc7rjy6wanxekga6f4gtqaklq3e3q4werkdovqwq6oq.domains.proton.ch."
+  }), "/(\".*?\"):/", "$1 = ")
+}
+
+
+
