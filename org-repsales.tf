@@ -19,20 +19,20 @@ resource "tfe_workspace" "repsales" {
   execution_mode      = "local"
 }
 
-data "tfe_workspace_ids" "repsales-all" {
-  depends_on   = [tfe_workspace.repsales]
-  organization = tfe_organization.repsales.name
-  names        = ["*"]
-}
-
-# Apply the Slack Notification Config to each created workspace in this Org.
-
-resource "tfe_notification_configuration" "repsales-slack" {
-  for_each         = data.tfe_workspace_ids.repsales-all.ids
-  destination_type = "slack"
-  enabled          = true
-  url              = var.terraform_slack_url
-  name             = "Terraform Cloud"
-  workspace_id     = each.value
-  triggers         = local.notification_triggers
-}
+#data "tfe_workspace_ids" "repsales-all" {
+#  depends_on   = [tfe_workspace.repsales]
+#  organization = tfe_organization.repsales.name
+#  names        = ["*"]
+#}
+#
+## Apply the Slack Notification Config to each created workspace in this Org.
+#
+#resource "tfe_notification_configuration" "repsales-slack" {
+#  for_each         = data.tfe_workspace_ids.repsales-all.ids
+#  destination_type = "slack"
+#  enabled          = true
+#  url              = var.terraform_slack_url
+#  name             = "Terraform Cloud"
+#  workspace_id     = each.value
+#  triggers         = local.notification_triggers
+#}
