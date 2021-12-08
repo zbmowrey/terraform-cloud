@@ -1,0 +1,41 @@
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy-terraform:
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./
+    env:
+      TF_IN_AUTOMATION: true
+      # We want TF to ping Slack when performing plan/apply in all repos.
+      TF_VAR_terraform_slack_url: ${secrets.TERRAFORM_SLACK_URL}
+      # So we can pass this to other repositories as they're updated/created.
+      TF_VAR_terraform_cloud_token: ${secrets.TERRAFORM_CLOUD_TOKEN}
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v2.3.4
+
+      - name: Install Terraform
+        id: tf_install
+        uses: hashicorp/setup-terraform@v1
+        with:
+          # Allows *this* Terraform operation to make changes using TF Cloud.
+          cli_config_credentials_token: ${{ secrets.TERRAFORM_CLOUD_TOKEN }}
+
+      - name: Terraform Init
+        id: tf_init
+        run: terraform init
+
+      - name: Terraform Plan
+        id: tf_plan
+        run: terraform plan -no-color -out="plan.txt"
+
+      - name: Terraform Apply
+        id: tf_apply
+        run: terraform apply plan.txt

@@ -1,0 +1,42 @@
+locals {
+  template_org          = "template"
+  template_app          = "template-com"
+  template_email        = "tfc@zbmowrey.com"
+  template_environments = tolist(["develop", "staging", "main"])
+}
+
+resource "tfe_organization" "template" {
+  lifecycle {
+    prevent_destroy = true
+  }
+  email = local.template_email
+  name  = local.template_org
+}
+
+resource "tfe_workspace" "template" {
+  for_each            = toset(local.template_environments)
+  name                = "${local.template_app}-${each.value}"
+  description         = "https://template.com ${each.value} environment"
+  organization        = tfe_organization.template.name
+  working_directory   = "terraform"
+  execution_mode      = "local"
+  auto_apply          = false
+}
+
+data "tfe_workspace_ids" "template-all" {
+  depends_on   = [tfe_workspace.template]
+  organization = tfe_organization.template.name
+  names        = ["*"]
+}
+
+# Apply the Slack Notification Config to each created workspace in this Org.
+
+resource "tfe_notification_configuration" "template-slack" {
+  for_each         = data.tfe_workspace_ids.template-all.ids
+  destination_type = "slack"
+  enabled          = true
+  url              = var.terraform_slack_url
+  name             = "Terraform Cloud"
+  workspace_id     = each.value
+  triggers         = local.notification_triggers
+}

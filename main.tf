@@ -13,32 +13,17 @@ terraform {
   }
 }
 
+provider "tfe" {
+  token = var.terraform_cloud_token
+}
+
+# Locals here is probably more like "globals", but it's a list that won't change a lot.
+# Github (afaik) doesn't support structured secrets (yet).
+
 locals {
   notification_triggers = ["run:needs_attention", "run:planning", "run:completed", "run:errored"]
 }
 
-provider "tfe" {
-  token = var.access_keys["tf_cloud"]
-}
-
-resource "tfe_workspace" "terraform-cloud" {
-  name                = "terraform-cloud"
-  description         = "Manages all Terraform Cloud organizations, workspaces, and variables."
-  organization        = tfe_organization.zbmowrey-cloud-admin.name
-  vcs_repo {
-    identifier     = "zbmowrey/terraform-cloud"
-    oauth_token_id = data.tfe_oauth_client.cloud-admin.oauth_token_id
-    branch         = "main"
-  }
-  auto_apply          = true
-  speculative_enabled = true
-}
-
-resource "tfe_notification_configuration" "terraform-cloud" {
-  destination_type = "slack"
-  enabled          = true
-  url              = var.terraform_slack_url
-  name             = "Terraform Cloud"
-  workspace_id     = tfe_workspace.terraform-cloud.id
-  triggers         = local.notification_triggers
-}
+# Workspaces should be defined & managed in the relevant org-*.tf file.
+# Secrets/variables should not be stored in Terraform Cloud or Serverless Framework.
+# Secrets may be stored in Github. See the version-control repository for that.
