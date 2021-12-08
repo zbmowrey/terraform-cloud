@@ -1,6 +1,3 @@
-
-
-
 # This organization contains our state. It must not be destroyed.
 
 resource "tfe_organization" "zbmowrey-cloud-admin" {
@@ -11,7 +8,12 @@ resource "tfe_organization" "zbmowrey-cloud-admin" {
   name  = "zbmowrey-cloud-admin"
 }
 
-# Terraform Cloud - Remote state and nothing but remote state.
+# Terraform Cloud - Used for remote state on all other projects. Used for remote state & deploy
+# on the terraform-cloud project.
+
+data "tfe_oauth_client" "cloud-admin" {
+  oauth_client_id = var.oauth_clients.cloud-admin
+}
 
 resource "tfe_workspace" "terraform-cloud" {
   lifecycle {
@@ -20,8 +22,14 @@ resource "tfe_workspace" "terraform-cloud" {
   name           = "terraform-cloud"
   description    = "Manages all Terraform Cloud organizations, workspaces, and variables."
   organization   = tfe_organization.zbmowrey-cloud-admin.name
-  execution_mode = "local"
+  execution_mode = "remote"
   auto_apply     = false
+  vcs_repo {
+    branch             = "main"
+    identifier         = "zbmowrey/terraform-cloud"
+    oauth_token_id     = data.tfe_oauth_client.cloud-admin.oauth_token_id
+    ingress_submodules = false
+  }
 }
 
 # Cloud Admin - the Governance Accounts of Various Cloud Providers.
@@ -43,11 +51,11 @@ resource "tfe_workspace" "version-control" {
   lifecycle {
     prevent_destroy = true
   }
-  name                = "version-control"
-  description         = "VCS Repository Management"
-  organization        = tfe_organization.zbmowrey-cloud-admin.name
-  execution_mode      = "local"
-  auto_apply          = false
+  name           = "version-control"
+  description    = "VCS Repository Management"
+  organization   = tfe_organization.zbmowrey-cloud-admin.name
+  execution_mode = "local"
+  auto_apply     = false
 }
 
 # Get all workspaces in this Org.
