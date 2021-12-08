@@ -14,7 +14,7 @@ terraform {
 }
 
 provider "tfe" {
-  token = var.terraform_cloud_token
+  token = var.terraform_token
 }
 
 # Locals here is probably more like "globals", but it's a list that won't change a lot.

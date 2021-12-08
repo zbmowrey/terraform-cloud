@@ -1,5 +1,5 @@
 variable "terraform_slack_url" {}
-variable "terraform_cloud_token" {}
+variable "terraform_token" {}
 
 ## AWS
 #
