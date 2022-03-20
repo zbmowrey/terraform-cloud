@@ -21,6 +21,7 @@ resource "tfe_workspace" "template" {
   working_directory   = "terraform"
   execution_mode      = "local"
   auto_apply          = false
+  terraform_version   = var.terraform_version
 }
 
 data "tfe_workspace_ids" "template-all" {

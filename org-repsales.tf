@@ -17,6 +17,7 @@ resource "tfe_workspace" "repsales" {
   description         = "https://repsales.net ${each.value} environment"
   organization        = tfe_organization.repsales.name
   execution_mode      = "local"
+  terraform_version   = var.terraform_version
 }
 
 #data "tfe_workspace_ids" "repsales-all" {

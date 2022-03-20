@@ -33,5 +33,6 @@ cf_distribution = {
 }
 aws_root_key    = ""
 aws_root_secret = ""
+terraform_version   = "1.1.3"
 
 

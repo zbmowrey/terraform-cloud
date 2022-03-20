@@ -19,11 +19,13 @@ resource "tfe_workspace" "terraform-cloud" {
   lifecycle {
     prevent_destroy = true
   }
-  name           = "terraform-cloud"
-  description    = "Manages all Terraform Cloud organizations, workspaces, and variables."
-  organization   = tfe_organization.zbmowrey-cloud-admin.name
-  execution_mode = "remote"
-  auto_apply     = false
+  name              = "terraform-cloud"
+  description       = "Manages all Terraform Cloud organizations, workspaces, and variables."
+  organization      = tfe_organization.zbmowrey-cloud-admin.name
+  execution_mode    = "remote"
+  auto_apply        = false
+  terraform_version = var.terraform_version
+
   vcs_repo {
     branch             = "main"
     identifier         = "zbmowrey/terraform-cloud"
@@ -38,11 +40,12 @@ resource "tfe_workspace" "cloud-admin" {
   lifecycle {
     prevent_destroy = true
   }
-  name           = "cloud-admin"
-  description    = "Governance Configuration for Cloud Service Providers"
-  organization   = tfe_organization.zbmowrey-cloud-admin.name
-  execution_mode = "local"
-  auto_apply     = false
+  name              = "cloud-admin"
+  description       = "Governance Configuration for Cloud Service Providers"
+  organization      = tfe_organization.zbmowrey-cloud-admin.name
+  execution_mode    = "local"
+  auto_apply        = false
+  terraform_version = var.terraform_version
 }
 
 # Version Control - Github/Gitlab Repository Configuration Management
@@ -51,11 +54,12 @@ resource "tfe_workspace" "version-control" {
   lifecycle {
     prevent_destroy = true
   }
-  name           = "version-control"
-  description    = "VCS Repository Management"
-  organization   = tfe_organization.zbmowrey-cloud-admin.name
-  execution_mode = "local"
-  auto_apply     = false
+  name              = "version-control"
+  description       = "VCS Repository Management"
+  organization      = tfe_organization.zbmowrey-cloud-admin.name
+  execution_mode    = "local"
+  auto_apply        = false
+  terraform_version = var.terraform_version
 }
 
 # Get all workspaces in this Org.

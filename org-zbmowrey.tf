@@ -23,6 +23,18 @@ resource "tfe_workspace" "zbmowrey" {
   working_directory   = "terraform"
   execution_mode      = "local"
   auto_apply          = false
+  terraform_version = var.terraform_version
+}
+
+resource "tfe_workspace" "cloud-inc" {
+  for_each            = toset(local.zbmowrey_environments)
+  name                = "cloud-inc-${each.value}"
+  description         = "https://cloud.inc ${each.value} environment"
+  organization        = tfe_organization.zbmowrey.name
+  working_directory   = "terraform"
+  execution_mode      = "local"
+  auto_apply          = false
+  terraform_version = var.terraform_version
 }
 
 resource "tfe_workspace" "insult-bot" {
@@ -32,6 +44,7 @@ resource "tfe_workspace" "insult-bot" {
   organization        = tfe_organization.zbmowrey.name
   execution_mode      = "local"
   auto_apply          = false
+  terraform_version = var.terraform_version
 }
 
 # Fetch all workspace ids for the org.
