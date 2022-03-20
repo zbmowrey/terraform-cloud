@@ -50,7 +50,6 @@ resource "tfe_workspace" "insult-bot" {
 # Fetch all workspace ids for the org.
 
 data "tfe_workspace_ids" "zbmowrey-all" {
-  depends_on   = [tfe_workspace.zbmowrey]
   organization = tfe_organization.zbmowrey.name
   names        = ["*"]
 }

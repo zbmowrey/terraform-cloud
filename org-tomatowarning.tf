@@ -23,7 +23,6 @@ resource "tfe_workspace" "tomatowarning" {
 }
 
 data "tfe_workspace_ids" "tomatowarning-all" {
-  depends_on   = [tfe_workspace.tomatowarning]
   organization = tfe_organization.tomatowarning.name
   names        = ["*"]
 }

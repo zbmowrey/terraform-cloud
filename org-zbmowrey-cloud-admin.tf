@@ -65,7 +65,6 @@ resource "tfe_workspace" "version-control" {
 # Get all workspaces in this Org.
 
 data "tfe_workspace_ids" "cloud-admin-all" {
-  depends_on   = [tfe_workspace.cloud-admin]
   organization = tfe_organization.zbmowrey-cloud-admin.name
   names        = ["*"]
 }
